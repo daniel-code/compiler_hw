@@ -2,24 +2,32 @@
 #include<stdio.h>
 #include<ctype.h>
 unsigned charCount = 0, tokenCount = 0, lineCount = 1 ,position = 0;
+
+void test_int();
+void test_wint();
+void test_real();
+void test_wreal();
+void test_rword();
+void test_id();
+void test_wid();
+void test_comment();
+void test_wcomment();
+void test_symbol();
+
 %}	
-int	[\+\-]?[1-9]*[0-9]
-wint	[\+\-]*[0-9]*[0-9]
-real	[\+\-]?(([0-9]+)|([0-9]*\.[0-9]+)([eE][\-\+]?[0-9]+)?)
-rword	{PROGRAM}|{VAR}|{IF}|{THEN}|{ELSE}|{BEGIN}|{END}|{WHILE}|{FOR}|{DO}|{TO}|{FUNCTION}|{PROCEDURE}
-id	[A-Za-z_][A-Za-z_0-9]+
-wid 	[A-Za-z_0-9]*{symbol}*[A-Za-z_0-9{symbol}]+
+INTEGER	[\+\-]?([0-9]|[1-9][0-9]+)
+wINTEGER [\+\-]*[0-9]+
+REAL	({INTEGER}|({INTEGER}\.([0-9]*[1-9]|[0])))([eE]{INTEGER}+)?
+wREAL	[\+\-]?((([0-9]+)|([0-9]*\.[0-9]*))([eE][\-\+]?(([0-9]+)|([0-9]*\.[0-9]*)))?)
+ID	([A-Za-z_][A-Za-z_0-9]+|[A-Za-z])
+wID 	([0-9]*{SYMBOL}*{ID})|({ID}{SYMBOL}*{ID})
+COMMENT "(*"([^\*]|[\*]+[^\*)])*[\*]+")"
+SYMBOL	[\?\*\+\|\(\)\^\$\.\[\]\{\}\"\\#%&/@;]+
+
+
 space 	[ ]
 eol 	\n
-symbol	[\?\*\+\|\(\)\^\$\.\[\]\{\}\"\\#%&/]
 
-PLUS        [\+]
-MINUS       [\-]
-TIMES       [\*]
-BY          [/]
-ASSIGN      :=
-BINARYOP    {PLUS}|{MINUS}|{TIMES}|{BY}|{ASSIGN}
-SEPARATOR   [,:;\.]
 PROGRAM     [Pp][Rr][Oo][Gg][Rr][Aa][Mm]
 VAR         [Vv][Aa][Rr]
 IF          [Ii][Ff]
@@ -33,12 +41,6 @@ DO          [Dd][Oo]
 TO          [Tt][Oo]
 FUNCTION    [Ff][Uu][Nn][Cc][Tt][Ii][Oo][Nn]
 PROCEDURE   [Pp][Rr][Oo][Cc][Ee][Dd][Uu][Rr][Ee]
-LETTER      [A-Za-z]
-DIGIT       [0-9]
-ID          {LETTER}({LETTER}|{DIGIT})*
-INTEGER     ({PLUS}|{MINUS})?{DIGIT}+
-REAL        {INTEGER}(\.({DIGIT})*)?([eE]{INTEGER})?
-COMMENT     "{"[^}\n]*"}"
 
 
 
@@ -47,12 +49,17 @@ COMMENT     "{"[^}\n]*"}"
 
 
 %%
-{int}		{ test_int();}
-{wint}		{ test_wint();}
-{real}		{ test_real();}
-{rword}		{ test_rword();}
-{id}		{ test_id();}
-{wid}		{ test_wid();}
+{INTEGER}	{ test_int();}
+{wINTEGER}	{ test_wint();}
+{REAL}		{ test_real();}
+{wREAL}		{ test_wreal();}
+{PROGRAM}|{VAR}|{IF}|{THEN}|{ELSE}|{BEGIN}|{END}|{WHILE}|{FOR}|{DO}|{TO}|{FUNCTION}|{PROCEDURE}		{ test_rword();}
+{ID}		{ test_id();}
+{wID}		{ test_wid();}
+{COMMENT}{COMMENT}*	{ test_comment();}
+{COMMENT}{SYMBOL} {test_wcomment();}
+{SYMBOL}	{ test_symbol();}
+
 
 {space} 	{}
 {eol}   	{lineCount++;position = 0;}
@@ -89,6 +96,13 @@ void test_real()
 	position++;
 	printf("Line: %d, 1st char: %d, \"%s\" is a \"real number\" \n", lineCount, position , yytext);
 }
+void test_wreal()
+{
+	tokenCount++;
+	charCount += yyleng;
+	position++;
+	printf("Line: %d, 1st char: %d, \"%s\" is an invalid \"real number\" \n", lineCount, position , yytext);
+}
 void test_rword()
 {
 	tokenCount++;
@@ -101,7 +115,10 @@ void test_id()
 	tokenCount++;
 	charCount += yyleng;
 	position++;
+	if(yyleng<=30)
 	printf("Line: %d, 1st char: %d, \"%s\" is an \"ID\" \n", lineCount, position , yytext);
+	else
+	printf("Line: %d, 1st char: %d, \"%s\" is an invalid \"ID\" \n", lineCount, position , yytext);
 }
 void test_wid()
 {
@@ -110,7 +127,27 @@ void test_wid()
 	position++;
 	printf("Line: %d, 1st char: %d, \"%s\" is an invalid \"ID\" \n", lineCount, position , yytext);
 }
-
+void test_comment()
+{
+	tokenCount++;
+	charCount += yyleng;
+	position++;
+	printf("Line: %d, 1st char: %d, \"%s\" is a \"comment\" \n", lineCount, position , yytext);		
+}
+void test_wcomment()
+{
+	tokenCount++;
+	charCount += yyleng;
+	position++;
+	printf("Line: %d, 1st char: %d, \"%s\" is a \"wrong comment\" \n", lineCount, position , yytext);
+}
+void test_symbol()
+{
+	tokenCount++;
+	charCount += yyleng;
+	position++;
+	printf("Line: %d, 1st char: %d, \"%s\" is a \"symbol\" \n", lineCount, position , yytext);	
+}
 
 
 
