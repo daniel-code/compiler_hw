@@ -1,6 +1,7 @@
 %{
 #include<stdio.h>
 #include<ctype.h>
+
 unsigned charCount = 0, tokenCount = 0, lineCount = 1 ,position = 0;
 
 void test_int();
@@ -12,7 +13,9 @@ void test_id();
 void test_wid();
 void test_comment();
 void test_wcomment();
+void test_string();
 void test_symbol();
+
 
 %}	
 INTEGER	[\+\-]?([0-9]|[1-9][0-9]+)
@@ -22,8 +25,8 @@ wREAL	[\+\-]?((([0-9]+)|([0-9]*\.[0-9]*))([eE][\-\+]?(([0-9]+)|([0-9]*\.[0-9]*))
 ID	([A-Za-z_][A-Za-z_0-9]+|[A-Za-z])
 wID 	([0-9]*{SYMBOL}*{ID})|({ID}{SYMBOL}*{ID})
 COMMENT "(*"([^\*]|[\*]+[^\*)])*[\*]+")"
+STRING	\'(\\.|[^\\'])*\'
 SYMBOL	[\?\*\+\|\(\)\^\$\.\[\]\{\}\"\\#%&/@;]+
-
 
 space 	[ ]
 eol 	\n
@@ -58,6 +61,7 @@ PROCEDURE   [Pp][Rr][Oo][Cc][Ee][Dd][Uu][Rr][Ee]
 {wID}		{ test_wid();}
 {COMMENT}{COMMENT}*	{ test_comment();}
 {COMMENT}{SYMBOL} {test_wcomment();}
+{STRING}	{ test_string();}
 {SYMBOL}	{ test_symbol();}
 
 
@@ -140,6 +144,20 @@ void test_wcomment()
 	charCount += yyleng;
 	position++;
 	printf("Line: %d, 1st char: %d, \"%s\" is a \"wrong comment\" \n", lineCount, position , yytext);
+}
+void test_string()
+{
+	tokenCount++;
+	charCount += yyleng;
+	position++;
+	int i = 0;
+	while(i < yyleng)
+	{
+		if(yytext[i]==(char)34)
+		yytext[i]=(char)39;
+		i++;
+	}
+	printf("Line: %d, 1st char: %d, %s is a \"string\" \n", lineCount, position , yytext);
 }
 void test_symbol()
 {
