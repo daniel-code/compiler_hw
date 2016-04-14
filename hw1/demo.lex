@@ -14,6 +14,7 @@ void test_wid();
 void test_comment();
 void test_wcomment();
 void test_string();
+void test_wstring();
 void test_symbol();
 
 
@@ -23,7 +24,7 @@ PLUS        [\+]
 MINUS       [\-]
 TIMES       [\*]
 BY          [/]
-ASSIGN      :=
+ASSIGN      :=|=
 BRACKETS    [\(\)]
 
 INTEGER	[\+\-]?([0-9]|[1-9][0-9]+)
@@ -34,7 +35,7 @@ ID	([A-Za-z_][A-Za-z_0-9]+|[A-Za-z])
 wID 	([0-9]*{SYMBOL}*{ID})|({ID}{SYMBOL}*{ID})
 COMMENT "(*"([^\*]|[\*]+[^\*)])*[\*]+")"
 sSTRING	\'(\\.|[^\'])*\'
-SYMBOL	[\?\|\^\$\.\[\]\{\}\"\\#%&/@;:,]|{PLUS}|{MINUS}|{TIMES}|{BY}|{ASSIGN}|{BRACKETS}
+SYMBOL	[\?\|\^\$\.\[\]\{\}\"\\#%&/@;:,]|{PLUS}|{MINUS}|{TIMES}|{BY}|{ASSIGN}
 
 space 	[ ]
 eol 	[\r][\n]|[\n]
@@ -71,8 +72,11 @@ STRING      [Ss][Tt][Rr][Ii][Nn][Gg]
 {ID}		{ test_id();}
 {wID}		{ test_wid();}
 {COMMENT}*	{ test_comment();}
-{COMMENT}{SYMBOL}+ {test_wcomment();}
+{COMMENT}({SYMBOL}|{BRACKETS})+ {test_wcomment();}
 {sSTRING}*	{ test_string();}
+
+[\']{ID}|{ID}[\']	{ test_wstring();}
+
 {SYMBOL}	{ test_symbol();}
 
 
@@ -168,11 +172,18 @@ void test_string()
 	{
 		if(i>0&&i<yyleng-1&&yytext[i]==(char)39&&yytext[i+1]==(char)39)
 		{
-			yytext[i]=(char)7;
+			yytext[i+1]=(char)7;
 		}
 		i++;
 	}
-	printf("Line: %d, 1st char: %d, %s is a \"string\" \n", lineCount, position , yytext);
+	printf("Line: %d, 1st char: %d, \"%s\" is a \"string\" \n", lineCount, position , yytext);
+}
+void test_wstring()
+{
+	tokenCount++;
+	charCount += yyleng;
+	position++;
+	printf("Line: %d, 1st char: %d, \"%s\" is a \"wrong string\" \n", lineCount, position , yytext);	
 }
 void test_symbol()
 {
