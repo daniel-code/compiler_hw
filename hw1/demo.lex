@@ -75,12 +75,12 @@ STRING      [Ss][Tt][Rr][Ii][Nn][Gg]
 {COMMENT}({SYMBOL}|{BRACKETS})+ {test_wcomment();}
 {sSTRING}*	{ test_string();}
 
-[\']{ID}|{ID}[\']	{ test_wstring();}
+[\'][^ \t\r\n]*	{ test_wstring();}
 
 {SYMBOL}	{ test_symbol();}
 
 
-{space} 	{}
+{space} 	{position ++;}
 {eol}   	{lineCount++;position = 0;}
 
 
@@ -99,74 +99,72 @@ void test_int()
 {
 	tokenCount++;
 	charCount += yyleng;
-	position++;
 	printf("Line: %d, 1st char: %d, \"%s\" is a \"int\" \n", lineCount, position , yytext);
-
+	position += yyleng;
 }
 void test_wint()
 {
 	tokenCount++;
 	charCount += yyleng;
-	position++;
 	printf("Line: %d, 1st char: %d, \"%s\" is an invalid \"int\" \n", lineCount, position , yytext);
+	position += yyleng;
 }
 void test_real()
 {
 	tokenCount++;
 	charCount += yyleng;
-	position++;
 	printf("Line: %d, 1st char: %d, \"%s\" is a \"real number\" \n", lineCount, position , yytext);
+	position += yyleng;
 }
 void test_wreal()
 {
 	tokenCount++;
 	charCount += yyleng;
-	position++;
 	printf("Line: %d, 1st char: %d, \"%s\" is an invalid \"real number\" \n", lineCount, position , yytext);
+	position += yyleng;
 }
 void test_rword()
 {
 	tokenCount++;
 	charCount += yyleng;
-	position++;
 	printf("Line: %d, 1st char: %d, \"%s\" is a \"reserved word\" \n", lineCount, position , yytext);	
+	position += yyleng;
 }
 void test_id()
 {
 	tokenCount++;
 	charCount += yyleng;
-	position++;
 	if(yyleng<=30)
 	printf("Line: %d, 1st char: %d, \"%s\" is an \"ID\" \n", lineCount, position , yytext);
 	else
 	printf("Line: %d, 1st char: %d, \"%s\" is an invalid \"ID\" \n", lineCount, position , yytext);
+	position += yyleng;
 }
 void test_wid()
 {
 	tokenCount++;
 	charCount += yyleng;
-	position++;
 	printf("Line: %d, 1st char: %d, \"%s\" is an invalid \"ID\" \n", lineCount, position , yytext);
+	position += yyleng;
 }
 void test_comment()
 {
 	tokenCount++;
 	charCount += yyleng;
-	position++;
 	printf("Line: %d, 1st char: %d, \"%s\" is a \"comment\" \n", lineCount, position , yytext);		
+	position += yyleng;
 }
 void test_wcomment()
 {
 	tokenCount++;
 	charCount += yyleng;
-	position++;
 	printf("Line: %d, 1st char: %d, \"%s\" is a \"wrong comment\" \n", lineCount, position , yytext);
+	position += yyleng;
 }
 void test_string()
 {
 	tokenCount++;
 	charCount += yyleng;
-	position++;
 	int i = 0;
 	while(i < yyleng)
 	{
@@ -177,18 +175,19 @@ void test_string()
 		i++;
 	}
 	printf("Line: %d, 1st char: %d, \"%s\" is a \"string\" \n", lineCount, position , yytext);
+	position += yyleng;
 }
 void test_wstring()
 {
 	tokenCount++;
 	charCount += yyleng;
-	position++;
 	printf("Line: %d, 1st char: %d, \"%s\" is a \"wrong string\" \n", lineCount, position , yytext);	
+	position += yyleng;
 }
 void test_symbol()
 {
 	tokenCount++;
 	charCount += yyleng;
-	position++;
 	printf("Line: %d, 1st char: %d, \"%s\" is a \"symbol\" \n", lineCount, position , yytext);	
+	position += yyleng;
 }
