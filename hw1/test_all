@@ -1,12 +1,2 @@
-mkdir output
-make && ./a.out < ./testfile/test1.pas > ./output/output1
-make && ./a.out < ./testfile/test2.pas > ./output/output2
-make && ./a.out < ./testfile/test3.pas > ./output/output3
-make && ./a.out < ./testfile/test4.pas > ./output/output4
-make && ./a.out < ./testfile/test5.pas > ./output/output5
-make && ./a.out < ./testfile/test6.pas > ./output/output6
-make && ./a.out < ./testfile/test7.pas > ./output/output7
-make && ./a.out < ./testfile/test8.pas > ./output/output8
-make && ./a.out < ./testfile/test9.pas > ./output/output9
-make && ./a.out < ./testfile/test10.pas > ./output/output10
-make && ./a.out < ./testfile/test111.pas > ./output/output11
+rm -r ./output && mkdir output
+make && ./a.out < ./testfile/test1.pas > ./output/output1&&./a.out < ./testfile/test2.pas > ./output/output2&&./a.out < ./testfile/test3.pas > ./output/output3&&./a.out < ./testfile/test4.pas > ./output/output4&&./a.out < ./testfile/test5.pas > ./output/output5&&./a.out < ./testfile/test6.pas > ./output/output6&&./a.out < ./testfile/test7.pas > ./output/output7&&./a.out < ./testfile/test8.pas > ./output/output8&&./a.out < ./testfile/test9.pas > ./output/output9&&./a.out < ./testfile/test10.pas > ./output/output10&&./a.out < ./testfile/test11.pas > ./output/output11

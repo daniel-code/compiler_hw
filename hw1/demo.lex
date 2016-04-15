@@ -75,7 +75,7 @@ STRING      [Ss][Tt][Rr][Ii][Nn][Gg]
 {COMMENT}({SYMBOL}|{BRACKETS})+ {test_wcomment();}
 {sSTRING}*	{ test_string();}
 
-[\'][^ \t\r\n]*	{ test_wstring();}
+[\'][^ \t\r\n\']*	{ test_wstring();}
 
 {SYMBOL}	{ test_symbol();}
 
@@ -170,7 +170,12 @@ void test_string()
 	{
 		if(i>0&&i<yyleng-1&&yytext[i]==(char)39&&yytext[i+1]==(char)39)
 		{
-			yytext[i+1]=(char)7;
+			int j = i;			
+			for(j;j<yyleng-1;j++)
+			{
+			yytext[j]=yytext[j+1];
+			}
+			yytext[yyleng-1]=(char)0;
 		}
 		i++;
 	}
