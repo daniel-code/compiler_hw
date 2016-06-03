@@ -3,7 +3,10 @@
 #define RED "\033[0;32;31m"
 #define PURPLE "\033[0;35m"
 #define NONE "\033[m"
-extern char currentChar;
+extern char *currentChar;
+extern char *s[5];
+extern unsigned stack_index;
+extern unsigned charCount , tokenCount , lineCount  ,position ;
 //you can specify your own yyerror
 void yyerror(char *str);
 char buffer[30];
@@ -16,32 +19,38 @@ In other words, you have to specify the error token if you want to do error reco
 /*
 You can find more examples of error handling if you google "yacc error handling"
 */
+
+
 %}
-%union{
-int INTEGER;
-};
-%token <INTEGER> INTEGER
-%type <dval> expression
+%token PROGRAM VAR INTEGER REALTYPE ARRAY OF
+%token ID INT
+
+%left '-' '+'
+%left '*' DIV
+
+
 %%
 
+prog : PROGRAM prog_name ';' VAR dec_list ';' {}
+prog_name : ID {}
+dec_list : dec | dec_list ';' dec
+dec : id_list ':' type
+type : standtype | arraytype
+standtype : INTEGER | REALTYPE
+arraytype : ARRAY '['INT '.''.' INT']' OF standtype
+id_list : ID | id_list ',' ID
 
-INT: {/*empty string*/}
-    | INT expression'\n'  { printf(PURPLE"%d\n",$2);}
-    | error '\n'{/*when syntax error occurs, yacc skips every token until it recognizes the next token(the newline) of error. You can see that error recovery will begin at next line. Use yyclearin macro to clear the old lookup token*/yyclearin;}
-expression: expression {$$ = $1;/* $N references the value of token or type, N is determined by the position of the token*/}
+
 %%
 
 int main(){
+printf("Line %d:",lineCount);
     yyparse();
     return 0;
 }
 void yyerror(char *str){
-    //By default, YACC calls yyerror() and pass "syntax errro" as a argument
-    //I think this is not a good design, you can redesign it if you find some useful macros:)
-    if(strcmp(str,"syntax error") == 0){
-        fprintf(stderr,RED"error: %s at %c\n"NONE,str,currentChar);
-    }else{
-    //this handles "divide by zero" condition
-        fprintf(stderr,RED"error: %s\n"NONE,str);
-    }
+
+        fprintf(stderr,RED"error: bad\n"NONE);
+
 }
+
