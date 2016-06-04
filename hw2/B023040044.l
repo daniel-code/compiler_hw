@@ -12,23 +12,10 @@ void display();
 PLUS        [\+]
 MINUS       [\-]
 TIMES       [\*]
-BY          [/]
+DIV         [/]
 ASSIGN      :=
-EQUAL       =
+RELOP       [>=<]|>=|<=|<>
 BRACKETS    [\(\)]
-
-INT	[\+\-]?([0-9]|[1-9][0-9]+)
-wINT    [\+\-]*[0-9]+
-REAL	({INTEGER}|({INTEGER}\.([0-9]*[1-9]|[0])))([eE]{INTEGER}+)?
-wREAL	[\+\-]?((([0-9]+)|([0-9]*\.[0-9]*))([eE][\-\+]?(([0-9]+)|([0-9]*\.[0-9]*)))?)
-ID	([A-Za-z_][A-Za-z_0-9]+|[A-Za-z])
-wID 	([0-9]*{SYMBOL}*{ID})|({ID}{SYMBOL}*{ID})
-COMMENT "(*"([^\*]|[\*]+[^\*)])*[\*]+")"
-sSTRING	\'(\\.|[^\'])*\'
-SYMBOL	[\?\|\^\$\.\[\]\{\}\"\\#%&/@:,]|{PLUS}|{MINUS}|{TIMES}|{BY}|{ASSIGN}
-
-space 	[ ]
-eol 	[\r][\n]|[\n]
 
 PROGRAM     [Pp][Rr][Oo][Gg][Rr][Aa][Mm]
 INTEGER     [Ii][Nn][Tt][Ee][Gg][Ee][Rr]
@@ -48,43 +35,58 @@ REALTYPE    [Ff][Ll][Oo][Aa][Tt]
 STRING      [Ss][Tt][Rr][Ii][Nn][Gg]
 OF	    [Oo][Ff]
 ARRAY	    [Aa][Rr][Rr][Aa][Yy]
+READ	    [Rr][Ee][Aa][Dd]
+WRITE       [Ww][Rr][Ii][Tt][Ee]
 
 
-
-
+INT	([0-9]|[1-9][0-9]+)
+REAL	({INT}|({INT}\.([0-9]*[1-9]|[0])))([eE]{INT}+)?
+ID	([A-Za-z_][A-Za-z_0-9]+|[A-Za-z])
+space 	[ ]
+eol 	[\r][\n]|[\n]
 
 
 %%
+{PLUS}       	{ display();return('+');}
+{MINUS}      	{ display();return('-');}
+{TIMES}     	{ display();return('*');}
+{DIV}        	{ display();return(DIV);}
+{ASSIGN}	{ display();return(ASSIGN);}
+";"		{ display();return(';');}
+"["		{ display();return('[');}
+"]"		{ display();return(']');}
+","		{ display();return(',');}
+"."		{ display();return('.');}
+":"		{ display();return(':');}
+"("		{ display();return('(');}
+")"		{ display();return(')');}
+{RELOP}		{ display();return(RELOP);}
 
-{INT}		{display();return(INT);}
+{INT}		{ display();return(INT);}
+{REAL}		{ display();return(REAL);}
 
+{PROGRAM}	{ display();return(PROGRAM);}
+{VAR}		{ display();return(VAR);}
+{INTEGER}	{ display();return(INTEGER);}
+{REALTYPE}	{ display();return(REALTYPE);}
+{ARRAY}		{ display();return(ARRAY);}
+{OF}		{ display();return(OF);}
+{BEGIN}		{ display();return(myBEGIN);}
+{END}		{ display();return(END);}
+{IF}		{ display();return(IF);}
+{THEN} 		{ display();return(THEN);}
+{READ} 		{ display();return(READ);}
+{WRITE} 	{ display();return(WRITE);}
+{FOR}		{ display();return(FOR);}
+{DO} 		{ display();return(DO);}
+{TO}		{ display();return(TO);}
 
+{ID}		{ display();return(ID);}
 
-{PROGRAM}	{display();return(PROGRAM);}
-{VAR}		{display();return(VAR);}
-{INTEGER}	{display();return(INTEGER);}
-{REALTYPE}	{display();return(REALTYPE);}
-{ARRAY}		{display();return(ARRAY);}
-{OF}		{display();return(OF);}
+{space} 	{ position ++;printf("%s",yytext);}
+{eol}   	{ lineCount++;position = 0;printf("\nLine %d:",lineCount);}
 
-{ID}		{display();return(ID);}
-
-
-
-";"		{display();return(';');}
-"["		{display();return('[');}
-"]"		{display();return(']');}
-","		{display();return(',');}
-"."		{display();return('.');}
-":"		{display();return(':');}
-
-
-
-{space} 	{position ++;printf("%s",yytext);}
-{eol}   	{ lineCount++;position = 0;printf("\n");printf("Line %d:",lineCount);}
-
-
-.           printf( "Unrecognized character: %s\n", yytext );
+.		printf("Unrecognized : %s\n",yytext);
 %%
 void display()
 {
