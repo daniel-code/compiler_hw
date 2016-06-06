@@ -34,9 +34,8 @@ You can find more examples of error handling if you google "yacc error handling"
 %left '*' DIV
 
 %%
-
-prog 		: PROGRAM prog_name ';' VAR dec_list ';' myBEGIN stmt_list ';' END '.'
-prog_name 	: ID 
+prog 		: PROGRAM prog_name ';' VAR dec_list ';' myBEGIN stmt_list ';' END '.' | error '.' {yyerrok;}
+prog_name 	: ID
 dec_list	: dec | dec_list ';' dec
 dec 		: id_list ':' type
 type 		: standtype | arraytype
@@ -54,7 +53,7 @@ factor		: varid | INT | REAL | '(' simpexp ')'
 read		: READ '(' id_list ')'
 write		: WRITE '(' id_list')'
 for		: FOR index_exp DO body 
-index_exp	: varid ASSIGN simpexp TO exp | error {yyerrok;yyclearin;}
+index_exp	: varid ASSIGN simpexp TO exp 
 varid		: ID | ID '[' simpexp ']'
 body		: stmt | myBEGIN stmt_list ';' END
 
