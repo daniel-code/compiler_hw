@@ -24,13 +24,15 @@ You can find more examples of error handling if you google "yacc error handling"
 
 
 %}
-%error-verbose
+%error-verbose //let error message can print correct token type
 %token PROGRAM VAR INTEGER REALTYPE ARRAY OF myBEGIN END IF THEN READ WRITE FOR DO TO
 %token ID INT REAL
 %token ASSIGN RELOP
 %left '-' '+'
 %left '*' DIV
+
 %%
+
 prog 		: PROGRAM prog_name ';' VAR dec_list ';' myBEGIN stmt_list ';' END '.' | error '.' {yyerrok;}
 prog_name 	: ID
 dec_list	: dec | dec_list ';' dec
@@ -54,11 +56,6 @@ index_exp	: varid ASSIGN simpexp TO exp
 varid		: ID | ID '[' simpexp ']'
 body		: stmt | myBEGIN stmt_list ';' END
 
-
-
-
-
-
 %%
 
 int main(){
@@ -68,7 +65,7 @@ int main(){
     return 0;
 }
 void yyerror(const char *str){
-	fprintf(stderr,RED"Line %d: 1st char: %d, %s\n"NONE, lineCount, position , str);
+	fprintf(stderr,RED"Line %d: 1st char: %d, %s\n"NONE, lineCount, position , str); //str is error output from yacc build-in function
 }
 
 
