@@ -9,7 +9,7 @@ extern char *s[5];
 extern unsigned stack_index;
 extern unsigned charCount , tokenCount , lineCount  ,position ;
 //you can specify your own yyerror
-void yyerror(char *str);
+void yyerror(const char *str);
 char buffer[30];
 int i;
 /*
@@ -24,15 +24,12 @@ You can find more examples of error handling if you google "yacc error handling"
 
 
 %}
-
-
-
+%error-verbose
 %token PROGRAM VAR INTEGER REALTYPE ARRAY OF myBEGIN END IF THEN READ WRITE FOR DO TO
 %token ID INT REAL
 %token ASSIGN RELOP
 %left '-' '+'
 %left '*' DIV
-
 %%
 prog 		: PROGRAM prog_name ';' VAR dec_list ';' myBEGIN stmt_list ';' END '.' | error '.' {yyerrok;}
 prog_name 	: ID
@@ -70,8 +67,8 @@ int main(){
     printf("\n");
     return 0;
 }
-void yyerror(char *str){
-	fprintf(stderr,RED"Line %d: 1st char: %d, syntax error at \"%s\"\n"NONE, lineCount, position , currentChar);
+void yyerror(const char *str){
+	fprintf(stderr,RED"Line %d: 1st char: %d, %s\n"NONE, lineCount, position , str);
 }
 
 

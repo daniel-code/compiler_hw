@@ -1,0 +1,1 @@
+make && echo "test1" ; ./a.out < ./testfile/test1.pas&& echo "test2" ; ./a.out < ./testfile/test2.pas && echo "test3" ; ./a.out < ./testfile/test3.pas && echo "test4" ; ./a.out < ./testfile/test4.pas && echo "test5" ; ./a.out < ./testfile/test5.pas

@@ -1,0 +1,13 @@
+1. Lex, Yacc 版本
+	flex 2.5.35
+	bison (GNU Bison) 3.0.2
+2. 作業平台
+	ubuntu 14.04 LTS
+3. 執行方式
+	(1)解壓縮後，直接輸入 ./test_all 即可以知道全部的測試結果
+	(2)輸入make 產生 a.out 再利用導入的方式，導入想要測試的檔案
+4. 你/妳如何處理這份規格書上的問題
+	(1)error messages：利用extern的變數，將目前的行、數字的位置、當下的yytext先存起來,當進入yyerror時候才能夠辨別error的位置，產生良好的error messages,另外加上%error-verbose使的yyerror能夠顯示修正的token
+	(2)recovery：利用內建的yyerrok，將error的狀態轉換回來成一般狀態繼續讀取
+5. 你/妳寫這個作業所遇到的問題
+	不是很熟悉yacc的中token的傳值方式，所以變成只能先在lex將檔案印出，無法用更進一步的顯示方式。
